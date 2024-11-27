@@ -23,25 +23,42 @@ def get_DelineationDoc(file):
         delDoc.append(file[key]['Leads']['v1']['DelineationDoc'])
     return delDoc
 
-class R_top:
+class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
-def getSignalsAndDelDoc(file):
+# def getSignalsAndDelDoc(file):
+#     signals = []
+#     delDoc_R = []
+#     for patient in file:
+#         for lead in file[patient]['Leads']:
+#             signals.append(file[patient]['Leads'][lead]['Signal'])
+#             points = []
+#             for i in range(len(file[patient]['Leads'][lead]['DelineationDoc']['qrs'])):
+#
+#                 point_R_x = file[patient]['Leads'][lead]['DelineationDoc']['qrs'][i][1]
+#                 point_R_y = file[patient]['Leads'][lead]['Signal'][point_R_x]
+#                 point = Point(point_R_x, point_R_y)
+#                 points.append(point)
+#             delDoc_R.append(points)
+#     return signals, delDoc_R
+
+
+def getSignalsAndDelDoc(file, lead, top):
     signals = []
     delDoc = []
-    for patient in file:
-        for lead in file[patient]['Leads']:
-            signals.append(file[patient]['Leads'][lead]['Signal'])
-            points = []
-            for i in range(len(file[patient]['Leads'][lead]['DelineationDoc']['qrs'])):
 
-                point_R_x = file[patient]['Leads'][lead]['DelineationDoc']['qrs'][i][1]
-                point_R_y = file[patient]['Leads'][lead]['Signal'][point_R_x]
-                point = R_top(point_R_x, point_R_y)
-                points.append(point)
-            delDoc.append(points)
+    for patient in file:
+
+        signals.append(file[patient]['Leads'][lead]['Signal'])
+        points = []
+        for i in range(len(file[patient]['Leads'][lead]['DelineationDoc'][top])):
+            point_x = file[patient]['Leads'][lead]['DelineationDoc'][top][i][0]
+            point_y = file[patient]['Leads'][lead]['Signal'][point_x]
+            point = Point(point_x, point_y)
+            points.append(point)
+        delDoc.append(points)
     return signals, delDoc
 
 def getSignalsAndDelDoc_Q(file):
@@ -56,7 +73,7 @@ def getSignalsAndDelDoc_Q(file):
 
                 point_Q_x = file[patient]['Leads'][lead]['DelineationDoc']['qrs'][i][0]
                 point_Q_y = file[patient]['Leads'][lead]['Signal'][point_Q_x]
-                point = R_top(point_Q_x, point_Q_y)
+                point = Point(point_Q_x, point_Q_y)
                 points.append(point)
             delDoc.append(points)
     return signals, delDoc
@@ -74,7 +91,7 @@ def getSignalsAndDelDoc_S(file):
 
                 point_S_x = file[patient]['Leads'][lead]['DelineationDoc']['qrs'][i][2]
                 point_S_y = file[patient]['Leads'][lead]['Signal'][point_S_x]
-                point = R_top(point_S_x, point_S_y)
+                point = Point(point_S_x, point_S_y)
                 points.append(point)
             delDoc.append(points)
     return signals, delDoc
@@ -179,39 +196,39 @@ def get_signals_small(file):
                 small_signal[k] = avg
 
                 if j in points_R_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     R_small.append(point)
 
                 if j in points_Q_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     Q_small.append(point)
 
                 if j in points_S_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     S_small.append(point)
 
                 if j+1 in points_R_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     R_small.append(point)
 
                 if j+1 in points_Q_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     Q_small.append(point)
 
                 if j+1 in points_S_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     S_small.append(point)
 
                 if j+2 in points_R_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     R_small.append(point)
 
                 if j+2 in points_Q_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     Q_small.append(point)
 
                 if j+2 in points_S_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     S_small.append(point)
 
 
@@ -219,39 +236,39 @@ def get_signals_small(file):
 
 
                 if j in points_P0_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     P0_small.append(point)
 
                 if j in points_P1_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     P1_small.append(point)
 
                 if j in points_P2_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     P2_small.append(point)
 
                 if j+1 in points_P0_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     P0_small.append(point)
 
                 if j+1 in points_P1_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     P1_small.append(point)
 
                 if j+1 in points_P2_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     P2_small.append(point)
 
                 if j+2 in points_P0_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     P0_small.append(point)
 
                 if j+2 in points_P1_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     P1_small.append(point)
 
                 if j+2 in points_P2_x:
-                    point = R_top(k, small_signal[k])
+                    point = Point(k, small_signal[k])
                     P2_small.append(point)
 
 
@@ -441,7 +458,7 @@ def getSignalsAndDelDoc_P1(file):
 
                 point_P_x = file[patient]['Leads'][lead]['DelineationDoc']['p'][i][1]
                 point_P_y = file[patient]['Leads'][lead]['Signal'][point_P_x]
-                point = R_top(point_P_x, point_P_y)
+                point = Point(point_P_x, point_P_y)
                 points.append(point)
             delDoc.append(points)
     return signals, delDoc
@@ -458,7 +475,7 @@ def getSignalsAndDelDoc_T1(file):
 
                 point_T_x = file[patient]['Leads'][lead]['DelineationDoc']['t'][i][1]
                 point_T_y = file[patient]['Leads'][lead]['Signal'][point_T_x]
-                point = R_top(point_T_x, point_T_y)
+                point = Point(point_T_x, point_T_y)
                 points.append(point)
             delDoc.append(points)
     return signals, delDoc

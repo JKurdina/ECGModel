@@ -1,4 +1,7 @@
+import torch
 import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader
 
 class ModelECG(nn.Module):
     def __init__(self):
@@ -40,8 +43,49 @@ class ModelECG(nn.Module):
     def forward(self, x):
         x = x.unsqueeze(1)
         encoded = self.encoder(x)
-        decoded = self.decoder(encoded)
         sigm = self.sigm(encoded)
-        decoded = decoded.squeeze(1)
 
-        return decoded, sigm
+        return sigm
+
+
+def save_model(lead, top):
+    class1 = torch.load('train_class1_' + top + '_' + lead + '_.pt', weights_only=True).float()
+    class2 = torch.load('train_class2_' + top + '_' + lead + '_.pt', weights_only=True)[:class1.size()[0]].float()
+
+    train_loader = DataLoader(class1, batch_size=50, shuffle=False)
+
+    train_loader_2 = DataLoader(class2, batch_size=50, shuffle=False)
+
+    model = ModelECG()
+
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+    criterion = nn.MSELoss()
+    losses = []
+
+    losses1 = []
+    losses2 = []
+    # Обучение
+    for epoch in range(100):
+        for i, (data_batch_1, data_batch_2) in enumerate(zip(train_loader, train_loader_2)):
+            optimizer.zero_grad()
+            # Обучаем модель на батче из train_loader
+            sigm_1 = model(data_batch_1)
+
+            target1 = torch.ones(data_batch_1.shape[0], 1)
+            loss_sigm_1 = criterion(sigm_1, target1)
+            loss_sigm_1.backward()
+
+            # Обучаем модель на батче из train_loader_2
+            sigm_2 = model(data_batch_2)
+            target2 = torch.zeros(data_batch_2.shape[0], 1)
+            loss_sigm_2 = criterion(sigm_2, target2)
+            loss_sigm_2.backward()
+
+            optimizer.step()
+
+        print('Epoch:', epoch, 'Loss binary vote:', loss_sigm_1.item(), loss_sigm_2.item())
+        losses1.append(loss_sigm_1.item())
+        losses2.append(loss_sigm_2.item())
+
+    torch.save(model, f"model_{top}_{lead}.pth")
